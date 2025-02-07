@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech & Translation Portal </title>
+    
+    <style>
+        
+        /* General Styles */
+        .loading {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            color: rgb(33, 1, 1); /* Changed to black */
+            font-weight: bold;
+            z-index: 1000;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .loading::after {
+            content: "";
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #ffffff;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(200deg,#eea929,#bf50f7,#e89d52,#4134cf);
+            min-height: 100vh;
+            display: flex; 
+            align-items: center;
+            justify-content: center;
+            background-attachment: fixed;
+            animation: gradientAnimation 12s ease infinite;
+            background-size: 300% 300%;
+            overflow: auto;
+        }
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+
+        /* Container */
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            overflow-y: auto;
+            background: url("C:\Users\rishi\OneDrive\Desktop\FlaskApp\image.png") 
+        }
+        
+
+        h1 {
+            color: #ffffff;
+            margin-bottom: 30px;
+            font-size: 36px;
+            font-weight: 600;
+            font-weight: bold;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            color: #ffffff;
+            margin-top: 30px;
+            font-size: 24px;
+            font-weight: 500;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 10px;
+        }
+
+        /* Input Group */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        select, input[type="text"] {
+            width: 80%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]::placeholder,
+        select::placeholder {
+            color: #150000; /* Your desired placeholder text color */
+            font-weight: normal; /* Set initial weight */
+        }
+
+        input[type="text"]:hover::placeholder,
+        select:hover::placeholder {
+            font-weight: bold; /* Make the placeholder text bold on hover */
+        }
+
+        /* Make the text bold on hover */
+        input[type="text"]:hover,
+        select:hover {
+            font-weight: bold; /* Make the text bold on hover */
+        }
+
+        select:focus, input[type="text"]:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 8px rgba(52, 152, 219, 0.5);
+        }
+
+        /* File Upload */
+        input[type="file"] {
+            display: none;
+        }
+
+        .custom-file-upload {
+            display: inline-block;
+            padding: 12px 20px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .custom-file-upload:hover {
+            background-color: #0056b3;
+        }
+        .hidden-input {
+            display: none;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 15px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            z-index: 10;
+        }
+        .popup button {
+            display: block;
+            width: 100%;
+            margin: 5px 0;
+            padding: 10px;
+            border: none;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .popup button:hover {
+            background-color: #0056b3;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 5;
+        }
+
+        /* Buttons */
+        button {
+    width: 70%;
+    padding: 12px;
+    background-color: #7c4afd;
+    color: white;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+
+        button:hover {
+            background-color: #0044d8;
+            transform: translateY(-2px);
+        }
+
+        select:hover {
+            background-color: hsl(203, 100%, 74%); /* You can change this color to any you prefer */
+            color: #140542; /* Keep the text color white or adjust as needed */
+        }
+
+        /* Default background color for the dropdown */
+        select {
+            background-color: rgba(255, 255, 255, 0.1); /* Keeps it semi-transparent */
+            color: #000000;
+        }
+
+        /* Focus state for select elements */
+        select:focus {
+            background-color: rgba(255, 255, 255, 0.2); /* Lighter background on focus */
+            border-color: #008fef; /* Change border color to match focus effect */
+        }
+
+        button:active {
+            transform: translateY(1);
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: rgba(39, 36, 36, 0.1);
+            color: white;
+            font-size: 16px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: left;
+        }
+
+        th {
+            background-color: rgba(255, 255, 255, 0.2);
+            font-weight: bold;
+        }
+
+        td {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        tr:nth-child(even) td {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            
+    .custom-file-upload {
+        display: inline-block;
+        padding: 10px 15px;
+        background-color: #007bff;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+        text-align: center;
+    }
+    .custom-file-upload:hover {
+        background-color: #0056b3;
+    }
+    .hidden-input {
+        display: none;
+    }
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: white;
+        border: 1px solid #ddd;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+    }
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+    .dropdown-content button {
+        display: block;
+        width: 100%;
+        border: none;
+        background: none;
+        padding: 10px;
+        text-align: left;
+        cursor: pointer;
+    }
+    .dropdown-content button:hover {
+        background-color: #f1f1f1;
+    }
+        }
+    </style>
+    <script>
+        let mediaRecorder;
+let recordedChunks = [];
+
+function showPopup() {
+        document.getElementById("popup").style.display = "block";
+        document.getElementById("overlay").style.display = "block";
+    }
+
+    function closePopup() {
+        document.getElementById("popup").style.display = "none";
+        document.getElementById("overlay").style.display = "none";
+    }
+
+    function updateFileLabel() {
+        document.getElementById("audioLabel").innerText = "Uploaded ✅";
+    }
+
+async function uploadAudio(endpoint) {
+    let fileInput = document.getElementById("audioFile");
+    let inputLang = document.getElementById("inputLangAudio").value;
+    let targetLang = document.getElementById("targetLangAudio");
+
+    if (fileInput.files.length === 0) {
+        alert("Please upload or record an audio file");
+        return;
+    }
+
+    let formData = new FormData();
+    formData.append("audio", fileInput.files[0]);
+    formData.append("input_lang", inputLang);
+
+    if (endpoint === "translate_audio") {
+        formData.append("target_lang", targetLang.value);
+    }
+
+    showLoading();
+    let response = await fetch(`/${endpoint}`, { method: "POST", body: formData });
+    let result = await response.json();
+    hideLoading();
+
+    displayResult(result);
+}
+
+async function translateText() {
+    let text = document.getElementById("textInput").value;
+    let targetLang = document.getElementById("targetLangText").value;
+
+    if (!text) {
+        alert("Please enter text to translate");
+        return;
+    }
+
+    showLoading();
+    let response = await fetch("/translate_text", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: text, target_lang: targetLang })
+    });
+
+    let result = await response.json();
+    hideLoading();
+
+    displayResult(result);
+}
+
+function displayResult(result) {
+    let table = document.getElementById("resultTable");
+    table.innerHTML = "";
+
+    let headerRow = table.insertRow();
+    let headerCell1 = headerRow.insertCell(0);
+    let headerCell2 = headerRow.insertCell(1);
+    headerCell1.textContent = "Speaker";
+    headerCell2.textContent = "Text";
+
+    for (let key in result) {
+        let row = table.insertRow();
+        let cell1 = row.insertCell(0);
+        let cell2 = row.insertCell(1);
+        cell1.textContent = key;
+        cell2.textContent = result[key];
+    }
+}
+
+function showLoading() {
+    let loadingDiv = document.createElement("div");
+    loadingDiv.id = "loading";
+    loadingDiv.className = "loading show";
+    loadingDiv.textContent = "Loading...";
+    document.body.appendChild(loadingDiv);
+}
+
+function hideLoading() {
+    let loadingDiv = document.getElementById("loading");
+    if (loadingDiv) {
+        loadingDiv.remove();
+    }
+}
+
+async function startRecording() {
+    recordedChunks = [];
+    let stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder.ondataavailable = handleDataAvailable;
+    mediaRecorder.start();
+    document.getElementById("recordButton").textContent = "Stop Recording";
+    document.getElementById("recordButton").onclick = stopRecording;
+}
+
+function stopRecording() {
+    mediaRecorder.stop();
+    document.getElementById("recordButton").textContent = "Start Recording";
+    document.getElementById("recordButton").onclick = startRecording;
+}
+
+function handleDataAvailable(event) {
+    if (event.data.size > 0) {
+        recordedChunks.push(event.data);
+        let blob = new Blob(recordedChunks, { type: 'audio/wav' });
+        let file = new File([blob], "recording.wav", { type: 'audio/wav' });
+        let fileInput = document.getElementById("audioFile");
+        let dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        fileInput.files = dataTransfer.files;
+        updateFileLabel();
+    }
+}
+
+    </script>
+</head>
+<body>
+    
+
+    <div class="container">
+        <h1>Speech & Translation Portal</h1>
+
+        <div class="input-group">
+            <label for="audioFile" class="custom-file-upload" id="audioLabel">🎵 Choose Audio File <br> ( .wav or .mp3 recommended )</label>
+            <input id="audioFile" type="file" accept="audio/*" onchange="updateFileLabel()">
+            <button id="recordButton" onclick="startRecording()"> ⏺ Start Recording  </button>
+
+
+            
+            <select id="inputLangAudio">
+                <option value="" disabled selected>🎵  Choose Audio File's Language</option>
+                
+               <option value="af">Afrikaans (Afrikaans)</option>
+<option value="ar">العربية (Arabic)</option>
+<option value="az">Azərbaycanca (Azerbaijani)</option>
+<option value="be">Беларуская (Belarusian)</option>
+<option value="bs">Bosanski (Bosnian)</option>
+<option value="bg">Български (Bulgarian)</option>
+<option value="ca">Català (Catalan)</option>
+<option value="cmn">中文 (Mandarin Chinese - Simplified)</option>
+<option value="hr">Hrvatski (Croatian)</option>
+<option value="cs">Čeština (Czech)</option>
+<option value="cy">Cymraeg (Welsh)</option>
+<option value="da">Dansk (Danish)</option>
+<option value="nl">Nederlands (Dutch)</option>
+<option value="en">English (English)</option>
+<option value="et">Eesti (Estonian)</option>
+<option value="fa">فارسی (Farsi)</option>
+<option value="fi">Suomi (Finnish)</option>
+<option value="fr">Français (French)</option>
+<option value="gl">Galego (Galician)</option>
+<option value="de">Deutsch (German)</option>
+<option value="el">Ελληνικά (Greek)</option>
+<option value="he">עברית (Hebrew)</option>
+<option value="hi">हिंदी (Hindi)</option>
+<option value="hu">Magyar (Hungarian)</option>
+<option value="is">Íslenska (Icelandic)</option>
+<option value="id">Bahasa Indonesia (Indonesian)</option>
+<option value="it">Italiano (Italian)</option>
+<option value="ja">日本語 (Japanese)</option>
+<option value="kn">ಕನ್ನಡ (Kannada)</option>
+<option value="kk">Қазақ (Kazakh)</option>
+<option value="ko">한국어 (Korean)</option>
+<option value="lv">Latviešu (Latvian)</option>
+<option value="lt">Lietuvių (Lithuanian)</option>
+<option value="mk">Македонски (Macedonian)</option>
+<option value="ms">Bahasa Melayu (Malay)</option>
+<option value="mr">मराठी (Marathi)</option>
+<option value="ne">नेपाली (Nepali)</option>
+<option value="no">Norsk (Norwegian)</option>
+<option value="pl">Polski (Polish)</option>
+<option value="pt">Português (Brazilian Portuguese)</option>
+<option value="ro">Română (Romanian)</option>
+<option value="ru">Русский (Russian)</option>
+<option value="sr">Српски (Serbian)</option>
+<option value="sk">Slovenčina (Slovak)</option>
+<option value="sl">Slovenščina (Slovenian)</option>
+<option value="es">Español (Spanish)</option>
+<option value="sw">Kiswahili (Swahili)</option>
+<option value="sv">Svenska (Swedish)</option>
+<option value="ta">தமிழ் (Tamil)</option>
+<option value="te">తెలుగు (Telugu)</option>
+<option value="th">ไทย (Thai)</option>
+<option value="tl">Tagalog (Tagalog)</option>
+<option value="tr">Türkçe (Turkish)</option>
+<option value="uk">Українська (Ukrainian)</option>
+<option value="ur">اردو (Urdu)</option>
+<option value="vi">Tiếng Việt (Vietnamese)</option>
+<option value="hy">Հայերեն (Armenian)</option>
+
+            
+            </select>
+        </div>
+
+        <h2>Audio to Text</h2>
+        <button onclick="uploadAudio('upload')">Convert</button>
+
+        <h2>Audio to Text + Translation</h2>
+        <select id="targetLangAudio">
+            <option value="" disabled selected>Choose Target Language 🔠</option>
+            <option value="af">Afrikaans</option>
+<option value="as">Assamese</option>
+<option value="ar">Arabic</option>
+<option value="az">Azerbaijani</option>
+<option value="be">Belarusian</option>
+<option value="bn">Bengali</option>
+<option value="bh">Bihari</option>
+<option value="bs">Bosnian</option>
+<option value="br">Breton</option>
+<option value="bg">Bulgarian</option>
+<option value="ca">Catalan</option>
+<option value="cmn">Mandarin Chinese (Simplified)</option>
+<option value="hr">Croatian</option>
+<option value="cs">Czech</option>
+<option value="da">Danish</option>
+<option value="nl">Dutch</option>
+<option value="en">English</option>
+<option value="et">Estonian</option>
+<option value="fa">Farsi</option>
+<option value="fi">Finnish</option>
+<option value="fr">French</option>
+<option value="gl">Galician</option>
+<option value="de">German</option>
+<option value="el">Greek</option>
+<option value="he">Hebrew</option>
+<option value="hi">Hindi</option>
+<option value="hu">Hungarian</option>
+<option value="is">Icelandic</option>
+<option value="id">Indonesian</option>
+<option value="it">Italian</option>
+<option value="ja">Japanese</option>
+<option value="kn">Kannada</option>
+<option value="kk">Kazakh</option>
+<option value="km">Khmer</option>
+<option value="ko">Korean</option>
+<option value="lv">Latvian</option>
+<option value="lt">Lithuanian</option>
+<option value="mk">Macedonian</option>
+<option value="ml">Malayalam</option>
+<option value="ms">Malay</option>
+<option value="mr">Marathi</option>
+<option value="mn">Mongolian</option>
+<option value="my">Burmese</option>
+<option value="ne">Nepali</option>
+<option value="no">Norwegian</option>
+<option value="pa">Punjabi</option>
+<option value="pl">Polish</option>
+<option value="pt">Portuguese (Brazil)</option>
+<option value="ro">Romanian</option>
+<option value="ru">Russian</option>
+<option value="sa">Sanskrit</option>
+<option value="sd">Sindhi</option>
+<option value="si">Sinhala</option>
+<option value="sk">Slovak</option>
+<option value="sl">Slovenian</option>
+<option value="es">Spanish</option>
+<option value="su">Sundanese</option>
+<option value="sw">Swahili</option>
+<option value="sv">Swedish</option>
+<option value="tl">Tagalog</option>
+<option value="ta">Tamil</option>
+<option value="te">Telugu</option>
+<option value="th">Thai</option>
+<option value="tg">Tajik</option>
+<option value="tr">Turkish</option>
+<option value="tk">Turkmen</option>
+<option value="uk">Ukrainian</option>
+<option value="ur">Urdu</option>
+<option value="uz">Uzbek</option>
+<option value="vi">Vietnamese</option>
+<option value="cy">Welsh</option>
+<option value="yi">Yiddish</option>
+<option value="yo">Yoruba</option>
+<option value="zu">Zulu</option>
+
+        
+
+    </select>
+        <button onclick="uploadAudio('translate_audio')">Convert & Translate 🗪</button>
+
+        <h2>Text to Text Translation</h2>
+        <input type="text" id="textInput" placeholder="Enter text here 💬">
+        <select id="targetLangText">
+            <option value="" disabled selected>Choose Target Language 🗣</option>
+            <option value="af">Afrikaans</option>
+            <option value="as">Assamese</option>
+            <option value="ar">Arabic</option>
+            <option value="az">Azerbaijani</option>
+            <option value="be">Belarusian</option>
+            <option value="bn">Bengali</option>
+            <option value="bh">Bihari</option>
+            <option value="bs">Bosnian</option>
+            <option value="br">Breton</option>
+            <option value="bg">Bulgarian</option>
+            <option value="ca">Catalan</option>
+            <option value="cmn">Mandarin Chinese (Simplified)</option>
+            <option value="hr">Croatian</option>
+            <option value="cs">Czech</option>
+            <option value="da">Danish</option>
+            <option value="nl">Dutch</option>
+            <option value="en">English</option>
+            <option value="et">Estonian</option>
+            <option value="fa">Farsi</option>
+            <option value="fi">Finnish</option>
+            <option value="fr">French</option>
+            <option value="gl">Galician</option>
+            <option value="de">German</option>
+            <option value="el">Greek</option>
+            <option value="he">Hebrew</option>
+            <option value="hi">Hindi</option>
+            <option value="hu">Hungarian</option>
+            <option value="is">Icelandic</option>
+            <option value="id">Indonesian</option>
+            <option value="it">Italian</option>
+            <option value="ja">Japanese</option>
+            <option value="kn">Kannada</option>
+            <option value="kk">Kazakh</option>
+            <option value="km">Khmer</option>
+            <option value="ko">Korean</option>
+            <option value="lv">Latvian</option>
+            <option value="lt">Lithuanian</option>
+            <option value="mk">Macedonian</option>
+            <option value="ml">Malayalam</option>
+            <option value="ms">Malay</option>
+            <option value="mr">Marathi</option>
+            <option value="mn">Mongolian</option>
+            <option value="my">Burmese</option>
+            <option value="ne">Nepali</option>
+            <option value="no">Norwegian</option>
+            <option value="pa">Punjabi</option>
+            <option value="pl">Polish</option>
+            <option value="pt">Portuguese (Brazil)</option>
+            <option value="ro">Romanian</option>
+            <option value="ru">Russian</option>
+            <option value="sa">Sanskrit</option>
+            <option value="sd">Sindhi</option>
+            <option value="si">Sinhala</option>
+            <option value="sk">Slovak</option>
+            <option value="sl">Slovenian</option>
+            <option value="es">Spanish</option>
+            <option value="su">Sundanese</option>
+            <option value="sw">Swahili</option>
+            <option value="sv">Swedish</option>
+            <option value="tl">Tagalog</option>
+            <option value="ta">Tamil</option>
+            <option value="te">Telugu</option>
+            <option value="th">Thai</option>
+            <option value="tg">Tajik</option>
+            <option value="tr">Turkish</option>
+            <option value="tk">Turkmen</option>
+            <option value="uk">Ukrainian</option>
+            <option value="ur">Urdu</option>
+            <option value="uz">Uzbek</option>
+            <option value="vi">Vietnamese</option>
+            <option value="cy">Welsh</option>
+            <option value="yi">Yiddish</option>
+            <option value="yo">Yoruba</option>
+            <option value="zu">Zulu</option>
+            
+
+        </select>
+        <button onclick="translateText()">Translate</button>
+
+        <table id="resultTable"></table>
+    </div>
+</body>
+</html> 
