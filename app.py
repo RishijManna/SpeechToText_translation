@@ -201,7 +201,7 @@ if __name__ == "__main__":
 
 
     
-#-m venv venv -> virtual envo
-#venv\Scripts\activate -> activating virtual env
+#-m venv venv -> virtual environment
+#venv\Scripts\activate -> activating virtual environment
 #python3 -m pip install Flask Flask-SQLAlchemy Flask-CORS rev_ai deep-translator bcrypt   -> installing necessary things
 #python app.py -> run
