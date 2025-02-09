@@ -187,7 +187,7 @@ def logout():
 
 
  5. Main Speech & Translation Page
-```python
+```
 @app.route('/speech_translation')
 def speech_translation():
     if 'email' not in session:
@@ -200,7 +200,7 @@ def speech_translation():
 
 
  Step 9: Handling File Uploads and Speech-to-Text
-```python
+```
 @app.route("/upload", methods=["POST"])
 def upload_audio():
 ```
@@ -209,7 +209,7 @@ def upload_audio():
 
 
  Step 10: Speech-to-Text & Translation
-```python
+```
 @app.route("/translate_audio", methods=["POST"])
 ```
 - Converts speech to text and translates it into another language.
@@ -217,7 +217,7 @@ def upload_audio():
 
 
  Step 11: Text Translation
-```python
+```
 @app.route("/translate_text", methods=["POST"])
 ```
 - Translates normal text using Google Translate.
@@ -225,7 +225,7 @@ def upload_audio():
 
 
  Step 12: Running the Flask App
-```python
+```
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
 ```
@@ -243,4 +243,19 @@ This Flask app:
 5. Stores user data securely in an SQLite database.
 
 
+FILE DIRECTORY
+```
+/project-folder
+    /templates
+        login.html
+        register.html
+        speech_translation.html
+    /static
+        /css
+            styles.css
+        /js
+            script.js
+    /uploads
+    app.py
+```
 
