@@ -253,6 +253,8 @@ FILE DIRECTORY
     /static
         /css
             styles.css
+            stylesreg.css
+            styleslog.css
         /js
             script.js
     /uploads
