@@ -1,3 +1,5 @@
+EXPLANATION OF THE WORKFLOW OF THE PROJECT IN EASY WORDS:
+
 This code is a Flask web application that does the following:
 1. Provides user authentication (register, login, logout).
 2. Allows users to upload an audio file for speech-to-text conversion.
