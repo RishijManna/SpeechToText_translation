@@ -1,162 +1,39 @@
-/* General body styling */
-body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Arial', sans-serif;
-    background-size: cover;
-    background-position: center;
-    background-blend-mode: overlay;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); /* Dark blue gradient */
-    animation: gradientMove 10s ease infinite;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Register page</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/stylesreg.css') }}">
+</head>
+<body>
 
-/* Overlay to darken the background image */
-body::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
-    z-index: 1;
-    animation: fadeIn 1.5s ease-in-out;
-}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-sm-12">
+            <h2>Register form</h2>
+            <form action="/register" method="POST">
+                
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
+                </div>
 
-/* Container styling */
-.container {
-    background: rgba(255, 255, 255, 0.1); /* Semi-transparent white */
-    padding: 40px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    width: 90%;
-    max-width: 600px;
-    height: auto;
-    min-height: 500px;
-    text-align: center;
-    animation: fadeIn 1.5s ease-in-out, gradientMove 5s ease infinite;
-    position: relative;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    backdrop-filter: blur(10px); /* Blur effect for glassmorphism */
-    border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
+                <div class="form-group">
+                    <label for="pwd">Password:</label>
+                    <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="password">
+                </div>
 
-.container:hover {
-    transform: scale(1.02); /* Slight zoom effect on hover */
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4); /* Enhanced shadow on hover */
-}
+                <button type="submit" class="btn btn-dark">Submit</button>
+                <a href="/login" class="btn btn-primary">Login</a>
+            </form>
+        </div>
+    </div>
+</div>
 
-/* Form styling */
-.container h2 {
-    margin: 20px 0;
-    color: #fff;
-    font-size: 2.5rem;
-    font-weight: 600;
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
-    animation: fadeIn 1.5s ease-in-out;
-}
-
-.container label {
-    color: #fff;
-    font-size: 1.1rem;
-    margin-bottom: 10px;
-    display: block;
-    animation: fadeIn 1.5s ease-in-out;
-}
-
-.container input {
-    width: 80%;
-    padding: 12px;
-    margin: 10px auto;
-    border: none;
-    border-radius: 5px;
-    font-size: 1rem;
-    outline: none;
-    background: rgba(255, 255, 255, 0.2); /* Semi-transparent input background */
-    color: #fff;
-    transition: all 0.3s ease;
-    animation: fadeIn 1.5s ease-in-out;
-}
-
-.container input::placeholder {
-    color: rgba(255, 255, 255, 0.7); /* Light placeholder text */
-}
-
-.container input:focus {
-    background: rgba(255, 255, 255, 0.3); /* Brighter background on focus */
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2); /* Glow effect */
-}
-
-.container button {
-    width: 80%;
-    padding: 12px;
-    margin: 20px auto;
-    border: none;
-    border-radius: 5px;
-    background-color: #e94560; /* Vibrant red */
-    color: #fff;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-    animation: fadeIn 1.5s ease-in-out;
-}
-
-.container button:hover {
-    background-color: #c2334d; /* Darker red on hover */
-    transform: translateY(-2px); /* Slight lift effect */
-}
-
-.container button:active {
-    transform: translateY(0); /* Reset on click */
-}
-
-.container a {
-    display: block;
-    margin: 15px auto;
-    color: #fff;
-    text-decoration: none;
-    font-size: 0.9rem;
-    transition: color 0.3s ease;
-    animation: fadeIn 1.5s ease-in-out;
-}
-
-.container a:hover {
-    color: #e94560; /* Vibrant red on hover */
-    text-decoration: underline;
-}
-
-/* Fade-in animation */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Gradient moving animation */
-@keyframes gradientMove {
-    0% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0% 50%;
-    }
-}
+</body>
+</html>
