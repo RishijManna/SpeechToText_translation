@@ -1,19 +1,27 @@
-from flask import Flask, request, render_template, redirect, session, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from flask_cors import CORS
-from rev_ai import apiclient
-from deep_translator import GoogleTranslator, exceptions
-import bcrypt
+from flask import Flask, request, render_template, redirect, session, jsonify 
+# Flask → Creates the web application.
+# request → Handles incoming user requests (like form submissions).
+# render_template → Loads HTML templates.
+# redirect → Redirects users from one page to another.
+# session → Stores user login information.
+# jsonify → Converts Python data into JSON format for API responses.
+
+from flask_sqlalchemy import SQLAlchemy # SQLAlchemy → A database library to store user data.
+from flask_cors import CORS # CORS → Allows the frontend (if it's on a different domain) to interact with the Flask API.
+from rev_ai import apiclient # apiclient (Rev AI) → Used for speech-to-text processing.
+from deep_translator import GoogleTranslator, exceptions  # GoogleTranslator → Handles text translation.
+import bcrypt # bcrypt → Encrypts passwords for security.
 import os
 import time
-import logging
+import logging # os, time, logging → System utilities for file handling, delays, and logging errors.
 
 # Initialize Flask app
 app = Flask(__name__)
-CORS(app)
-app.secret_key = 'secret_key'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-db = SQLAlchemy(app)
+CORS(app) # Enables Cross-Origin Resource Sharing
+app.secret_key = '583eccd0ed17d07012ee047b448817da037d81812d79ed693d5c4208a42cf81c' # Secret key for session management
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db' # Configuring the database
+
+db = SQLAlchemy(app) # Initializing the database
 
 # Rev AI API Client
 REV_AI_API_KEY = "02GX5Lx4PLmnyV7ZMQA2C_Iyy4dt3kY94-8RUMAvnvD3Q-4HVqf48UOs1zEW2C9_8thUQ5zKOa7VMxbaKBdjz_5W_FoW0"  # Replace with your actual Rev AI API key
@@ -21,7 +29,7 @@ rev_client = apiclient.RevAiAPIClient(REV_AI_API_KEY)
 
 # Ensure uploads folder exists
 UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(UPLOAD_FOLDER, exist_ok=True) # Creates folder if it doesn't exist
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 # Configure logging
@@ -30,10 +38,10 @@ logger = logging.getLogger(__name__)
 
 # User model for authentication
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100), unique=True)
-    password = db.Column(db.String(100))
+    id = db.Column(db.Integer, primary_key=True) # Unique ID for each user
+    name = db.Column(db.String(100), nullable=False) # User's name
+    email = db.Column(db.String(100), unique=True) # User's email
+    password = db.Column(db.String(100)) # Hashed password
 
     def __init__(self, email, password, name):
         self.name = name
@@ -59,7 +67,7 @@ def register():
         name = request.form['name']
         email = request.form['email']
         password = request.form['password']
-
+        
         new_user = User(name=name, email=email, password=password)
         db.session.add(new_user)
         db.session.commit()
@@ -95,7 +103,7 @@ def logout():
 def speech_translation():
     if 'email' not in session:
         return redirect('/login')  # Redirect to login if not authenticated
-    return render_template('speech_translation.html')  # Your main application page
+    return render_template('speech_translation.html')  # Main application page
 
 # Upload and process audio file
 @app.route("/upload", methods=["POST"])
@@ -195,13 +203,13 @@ def translate_text():
         logger.error(f"Error in translation: {e}")
         return jsonify({"error": str(e)}), 500
 
-# Run Flask app
+# for Running the Flask app
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)#port is 5000
 
 
     
-#-m venv venv -> virtual environment
-#venv\Scripts\activate -> activating virtual environment
+#-m venv venv -> virtual envo
+#venv\Scripts\activate -> activating virtual env
 #python3 -m pip install Flask Flask-SQLAlchemy Flask-CORS rev_ai deep-translator bcrypt   -> installing necessary things
 #python app.py -> run
