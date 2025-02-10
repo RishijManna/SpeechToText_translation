@@ -1,133 +1,328 @@
-let mediaRecorder;
-let recordedChunks = [];
-
-function showPopup() {
-        document.getElementById("popup").style.display = "block";
-        document.getElementById("overlay").style.display = "block";
-    }
-
-    function closePopup() {
-        document.getElementById("popup").style.display = "none";
-        document.getElementById("overlay").style.display = "none";
-    }
-
-    function updateFileLabel() {
-        document.getElementById("audioLabel").innerText = "Uploaded ✅";
-    }
-
-async function uploadAudio(endpoint) {
-    let fileInput = document.getElementById("audioFile");
-    let inputLang = document.getElementById("inputLangAudio").value;
-    let targetLang = document.getElementById("targetLangAudio");
-
-    if (fileInput.files.length === 0) {
-        alert("Please upload or record an audio file");
-        return;
-    }
-
-    let formData = new FormData();
-    formData.append("audio", fileInput.files[0]);
-    formData.append("input_lang", inputLang);
-
-    if (endpoint === "translate_audio") {
-        formData.append("target_lang", targetLang.value);
-    }
-
-    showLoading();
-    let response = await fetch(`/${endpoint}`, { method: "POST", body: formData });
-    let result = await response.json();
-    hideLoading();
-
-    displayResult(result);
+/* General Styles */
+.loading {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    color: #2C3E50; /* Dark gray for better readability */
+    font-weight: bold;
+    z-index: 1000;
 }
 
-async function translateText() {
-    let text = document.getElementById("textInput").value;
-    let targetLang = document.getElementById("targetLangText").value;
+.loading.show {
+    display: block;
+}
 
-    if (!text) {
-        alert("Please enter text to translate");
-        return;
+.loading::after {
+    content: "";
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(44, 62, 80, 0.3); /* Dark gray with transparency */
+    border-radius: 50%;
+    border-top-color: #2C3E50; /* Dark gray */
+    animation: spin 1s ease-in-out infinite;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(245deg, #1f3245, #0d2842e6, #094c90c4, #132a41); /* Dark blue-gray gradient */
+    min-height: 100vh;
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+    background-attachment: fixed;
+    animation: gradientAnimation 12s ease infinite;
+    background-size: 300% 300%;
+    overflow: auto;
+}
+
+@keyframes gradientAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Container */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    overflow-y: auto;
+    background: url("C:\Users\rishi\OneDrive\Desktop\FlaskApp\image.png");
+}
+
+h1 {
+    color: #FFFFFF; /* White for contrast */
+    margin-bottom: 30px;
+    font-size: 36px;
+    font-weight: 600;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+h2 {
+    color: #FFFFFF; /* White for contrast */
+    margin-top: 30px;
+    font-size: 24px;
+    font-weight: 500;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 10px;
+}
+
+/* Input Group */
+.input-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+select, input[type="text"] {
+    width: 80%;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #FFFFFF; /* White text */
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+input[type="text"]::placeholder,
+select::placeholder {
+    color: #BDC3C7; /* Light gray placeholder */
+    font-weight: normal;
+}
+
+input[type="text"]:hover::placeholder,
+select:hover::placeholder {
+    font-weight: bold;
+}
+
+input[type="text"]:hover,
+select:hover {
+    font-weight: bold;
+}
+
+select:focus, input[type="text"]:focus {
+    border-color: #3498DB; /* Bright blue for focus */
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.5);
+}
+
+/* File Upload */
+input[type="file"] {
+    display: none;
+}
+
+.custom-file-upload {
+    display: inline-block;
+    padding: 12px 20px;
+    background-color: #3498DB; /* Bright blue */
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.custom-file-upload:hover {
+    background-color: #2980B9; /* Darker blue on hover */
+}
+
+.hidden-input {
+    display: none;
+}
+
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 15px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    z-index: 10;
+}
+
+.popup button {
+    display: block;
+    width: 100%;
+    margin: 5px 0;
+    padding: 10px;
+    border: none;
+    background: #3498DB; /* Bright blue */
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.popup button:hover {
+    background-color: #2980B9; /* Darker blue on hover */
+}
+
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 5;
+}
+
+/* Buttons */
+button {
+    width: 70%;
+    padding: 12px;
+    background-color: #4f14b6; /* Bright blue */
+    color: white;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background-color: #9221e9; /* Darker blue on hover */
+    transform: translateY(-2px);
+}
+
+select:hover {
+    background-color: rgba(52, 152, 219, 0.1); /* Light blue on hover */
+    color: #b62ae9; /* Dark gray text */
+}
+
+select {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ff9501; /* Dark gray text */
+}
+
+select:focus {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: #3498DB; /* Bright blue for focus */
+}
+
+button:active {
+    transform: translateY(1);
+}
+
+/* Table */
+table {
+    width: 100%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 16px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+th, td {
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: left;
+}
+
+th {
+    background-color: rgba(255, 255, 255, 0.2);
+    font-weight: bold;
+}
+
+td {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+tr:nth-child(even) td {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+        padding: 20px;
     }
 
-    showLoading();
-    let response = await fetch("/translate_text", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: text, target_lang: targetLang })
-    });
+    h1 {
+        font-size: 28px;
+    }
 
-    let result = await response.json();
-    hideLoading();
+    h2 {
+        font-size: 20px;
+    }
 
-    displayResult(result);
-}
+    .custom-file-upload {
+        padding: 10px 15px;
+    }
 
-function displayResult(result) {
-    let table = document.getElementById("resultTable");
-    table.innerHTML = "";
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: linear-gradient(200deg, #34495E, #2C3E50, #34495E, #2C3E50);
+        border: 1px solid #ddd;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+    }
 
-    let headerRow = table.insertRow();
-    let headerCell1 = headerRow.insertCell(0);
-    let headerCell2 = headerRow.insertCell(1);
-    headerCell1.textContent = "Speaker";
-    headerCell2.textContent = "Text";
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
 
-    for (let key in result) {
-        let row = table.insertRow();
-        let cell1 = row.insertCell(0);
-        let cell2 = row.insertCell(1);
-        cell1.textContent = key;
-        cell2.textContent = result[key];
+    .dropdown-content button {
+        display: block;
+        width: 100%;
+        border: none;
+        background: none;
+        padding: 10px;
+        text-align: left;
+        cursor: pointer;
+    }
+
+    .dropdown-content button:hover {
+        background-color: #f1f1f1;
     }
 }
 
-function showLoading() {
-    let loadingDiv = document.createElement("div");
-    loadingDiv.id = "loading";
-    loadingDiv.className = "loading show";
-    loadingDiv.textContent = "Loading...";
-    document.body.appendChild(loadingDiv);
+/* Logout Button */
+.logout-btn {
+    position: absolute;
+    top: 29px;
+    right: 20px;
+    width: 10%;
+    padding: 10px 20px;
+    background-color: #E74C3C; /* Red for logout */
+    color: white;
+    border: 3px solid #C0392B; /* Darker red border */
+    border-radius: 29px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
 }
 
-function hideLoading() {
-    let loadingDiv = document.getElementById("loading");
-    if (loadingDiv) {
-        loadingDiv.remove();
-    }
-}
-
-async function startRecording() {
-    recordedChunks = [];
-    let stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    mediaRecorder = new MediaRecorder(stream);
-    mediaRecorder.ondataavailable = handleDataAvailable;
-    mediaRecorder.start();
-    document.getElementById("recordButton").textContent = "Stop Recording";
-    document.getElementById("recordButton").onclick = stopRecording;
-}
-
-function stopRecording() {
-    mediaRecorder.stop();
-    document.getElementById("recordButton").textContent = "Start Recording";
-    document.getElementById("recordButton").onclick = startRecording;
-}
-
-function handleDataAvailable(event) {
-    if (event.data.size > 0) {
-        recordedChunks.push(event.data);
-        let blob = new Blob(recordedChunks, { type: 'audio/wav' });
-        let file = new File([blob], "recording.wav", { type: 'audio/wav' });
-        let fileInput = document.getElementById("audioFile");
-        let dataTransfer = new DataTransfer();
-        dataTransfer.items.add(file);
-        fileInput.files = dataTransfer.files;
-        updateFileLabel();
-    }
-}
-
-function logout() {
-    // Perform logout actions here, such as clearing session data or redirecting to a logout endpoint
-    alert("You have been logged out.");
-    window.location.href = "/logout"; // Redirect to logout endpoint or login page
+.logout-btn:hover {
+    background-color: #C0392B; /* Darker red on hover */
 }
